@@ -16,7 +16,7 @@
             const messageBox = document.createElement('div');
             messageBox.id = 'customAlertBox';
             messageBox.textContent = message;
-            messageBox.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index:1001; text-align: center;";
+            messageBox.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index:1001; text-align: center; white-space: pre-line;";
             document.body.appendChild(messageBox);
             setTimeout(() => messageBox.remove(), 3000);
         }

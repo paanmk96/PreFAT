@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Subrack No.
             const subrackCell = row.insertCell();
             const subrackInput = document.createElement('input');
-            subrackInput.type = 'text';
+            subrackInput.type = 'number';
             subrackInput.name = `${moduleType.toLowerCase()}_${i}_subrack`;
             subrackInput.placeholder = 'Enter subrack';
             subrackInput.required = true;
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Slot No.
             const slotCell = row.insertCell();
             const slotInput = document.createElement('input');
-            slotInput.type = 'text';
+            slotInput.type = 'number';
             slotInput.name = `${moduleType.toLowerCase()}_${i}_slot`;
             slotInput.placeholder = 'Enter slot';
             slotInput.required = true;
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
             serialCell.style.gap = '5px';
             
             const serialInput = document.createElement('input');
-            serialInput.type = 'text';
+            serialInput.type = 'number';
             serialInput.name = `${moduleType.toLowerCase()}_${i}_serial`;
             serialInput.placeholder = 'Enter or Scan serial';
             serialInput.required = true;
@@ -210,19 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
             scanButton.style.boxSizing = 'border-box';
             scanButton.style.whiteSpace = 'nowrap';
             
-            // Add input validation for serial numbers
-            serialInput.addEventListener('input', function() {
-                const value = this.value.trim();
-                if (value && serialNumberTracker.checkDuplicate(value)) {
-                    this.classList.add('duplicate-serial');
-                    scanButton.classList.add('error');
-                    scanButton.textContent = 'Duplicate!';
-                } else {
-                    this.classList.remove('duplicate-serial');
-                    scanButton.classList.remove('error');
-                    scanButton.textContent = 'Scan';
-                }
-            });
+
 
             scanButton.addEventListener('click', function() {
                 if (typeof initiateScanForField === 'function') {
@@ -319,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Handle duplicates if found
         if (duplicateDetails.length > 0) {
             const duplicateMessages = duplicateDetails.map(d => 
-                `Serial ${d.serial} appears in both ${d.location1} and ${d.location2}`
+                ` ${d.serial} appears in both ${d.location1} and ${d.location2}`
             );
             showCustomAlert(`Duplicate serial numbers found:\n${duplicateMessages.join('\n')}`);
             return false;
