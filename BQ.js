@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const duplicateMessages = duplicateDetails.map(d => 
                 ` ${d.serial} appears in both ${d.location1} and ${d.location2}`
             );
-            showCustomAlert(`Duplicate serial numbers found:\n${duplicateMessages.join('\n')}`);
+            showCustomAlert(`Serial No:\n${duplicateMessages.join('\n')}`);
             return false;
         }
 
