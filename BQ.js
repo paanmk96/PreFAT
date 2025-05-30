@@ -210,19 +210,6 @@ document.addEventListener('DOMContentLoaded', function() {
             scanButton.style.boxSizing = 'border-box';
             scanButton.style.whiteSpace = 'nowrap';
             
-            // Add input validation for serial numbers
-            serialInput.addEventListener('input', function() {
-                const value = this.value.trim();
-                if (value && serialNumberTracker.checkDuplicate(value)) {
-                    this.classList.add('duplicate-serial');
-                    scanButton.classList.add('error');
-                    scanButton.textContent = 'Duplicate!';
-                } else {
-                    this.classList.remove('duplicate-serial');
-                    scanButton.classList.remove('error');
-                    scanButton.textContent = 'Scan';
-                }
-            });
 
             scanButton.addEventListener('click', function() {
                 if (typeof initiateScanForField === 'function') {
@@ -249,84 +236,84 @@ document.addEventListener('DOMContentLoaded', function() {
     function createAOSheet(count) { return createModuleSheetBase(count, 'AO', ['AO-2']); }
 
     // --- Field Validation Function ---
-    function validateAllModuleFields() {
-        serialNumberTracker.clearAll();
-        const sheets = sheetsContainer.getElementsByClassName('module-sheet');
-        let emptyFieldsExist = false;
-        let duplicateSerialsExist = false;
-        let duplicateDetails = [];
+function validateAllModuleFields() {
+    serialNumberTracker.clearAll();
+    const sheets = sheetsContainer.getElementsByClassName('module-sheet');
+    let emptyFieldsExist = false;
+    let duplicateSerialsExist = false;
+    let duplicateDetails = [];
 
-        // First pass: Check for empty fields
-        for (const sheet of sheets) {
-            const tableRows = sheet.querySelectorAll('tbody tr');
-            const moduleType = sheet.querySelector('.sheet-header h3')?.textContent || 'Unknown';
+    // First pass: Check for empty fields
+    for (const sheet of sheets) {
+        const tableRows = sheet.querySelectorAll('tbody tr');
+        const moduleType = sheet.querySelector('.sheet-header h3')?.textContent || 'Unknown';
 
-            for (let i = 0; i < tableRows.length; i++) {
-                const row = tableRows[i];
-                const moduleNo = i + 1;
-                
-                // Check Part Number (select)
-                const partNoSelect = row.querySelector('select');
-                if (!partNoSelect?.value) {
-                    showCustomAlert(`Please select Part Number for ${moduleType}, Module ${moduleNo}`);
-                    partNoSelect?.focus();
+        for (let i = 0; i < tableRows.length; i++) {
+            const row = tableRows[i];
+            const moduleNo = i + 1;
+            
+            // Check Part Number (select)
+            const partNoSelect = row.querySelector('select');
+            if (!partNoSelect?.value) {
+                showCustomAlert(`Please select Part Number for ${moduleType}, Module ${moduleNo}`);
+                partNoSelect?.focus();
+                return false;
+            }
+
+            // Check other fields (Subrack, Slot, Serial)
+            const inputs = row.querySelectorAll('input'); // Changed to get all inputs regardless of type
+            for (const input of inputs) {
+                if (!input.value.trim()) {
+                    let fieldName = '';
+                    if (input.name.includes('subrack')) fieldName = 'Subrack No.';
+                    else if (input.name.includes('slot')) fieldName = 'Slot No.';
+                    else if (input.name.includes('serial')) fieldName = 'Serial No.';
+                    
+                    showCustomAlert(`Please fill in ${fieldName} for ${moduleType}, Module ${moduleNo}`);
+                    input.focus();
                     return false;
                 }
-
-                // Check other fields (Subrack, Slot, Serial)
-                const inputs = row.querySelectorAll('input[type="text"]');
-                for (const input of inputs) {
-                    if (!input.value.trim()) {
-                        let fieldName = '';
-                        if (input.name.includes('subrack')) fieldName = 'Subrack No.';
-                        else if (input.name.includes('slot')) fieldName = 'Slot No.';
-                        else if (input.name.includes('serial')) fieldName = 'Serial No.';
-                        
-                        showCustomAlert(`Please fill in ${fieldName} for ${moduleType}, Module ${moduleNo}`);
-                        input.focus();
-                        return false;
-                    }
-                }
             }
         }
-
-        // Second pass: Check for duplicate serials
-        for (const sheet of sheets) {
-            const tableRows = sheet.querySelectorAll('tbody tr');
-            const moduleType = sheet.querySelector('.sheet-header h3')?.textContent || 'Unknown';
-
-            for (let i = 0; i < tableRows.length; i++) {
-                const row = tableRows[i];
-                const moduleNo = i + 1;
-                const serialInput = row.querySelector('input[name$="_serial"]');
-                const serialValue = serialInput?.value.trim();
-
-                if (serialValue) {
-                    if (serialNumberTracker.checkDuplicate(serialValue)) {
-                        const duplicateLocation = serialNumberTracker.getDuplicateLocation(serialValue);
-                        duplicateDetails.push({
-                            serial: serialValue,
-                            location1: duplicateLocation,
-                            location2: `${moduleType} Module ${moduleNo}`
-                        });
-                    } else {
-                        serialNumberTracker.addSerial(serialValue, moduleType, moduleNo);
-                    }
-                }
-            }
-        }
-
-        // Handle duplicates if found
-        if (duplicateDetails.length > 0) {
-            const duplicateMessages = duplicateDetails.map(d => 
-                `${d.serial} found in both ${d.location1} and ${d.location2}`
-            );
-            showCustomAlert(`Serial No:\n${duplicateMessages.join('\n')}`);
-            return false;
-        }
-
-        return true;
     }
+
+    // Second pass: Check for duplicate serials
+    for (const sheet of sheets) {
+        const tableRows = sheet.querySelectorAll('tbody tr');
+        const moduleType = sheet.querySelector('.sheet-header h3')?.textContent || 'Unknown';
+
+        for (let i = 0; i < tableRows.length; i++) {
+            const row = tableRows[i];
+            const moduleNo = i + 1;
+            const serialInput = row.querySelector('input[name$="_serial"]');
+            const serialValue = serialInput?.value.trim();
+
+            if (serialValue) {
+                if (serialNumberTracker.checkDuplicate(serialValue)) {
+                    const duplicateLocation = serialNumberTracker.getDuplicateLocation(serialValue);
+                    duplicateDetails.push({
+                        serial: serialValue,
+                        location1: duplicateLocation,
+                        location2: `${moduleType} Module ${moduleNo}`
+                    });
+                } else {
+                    serialNumberTracker.addSerial(serialValue, moduleType, moduleNo);
+                }
+            }
+        }
+    }
+
+    // Handle duplicates if found
+    if (duplicateDetails.length > 0) {
+        const duplicateMessages = duplicateDetails.map(d => 
+            `${d.serial} found in both ${d.location1} and ${d.location2}`
+        );
+        showCustomAlert(`Duplicate Serial Numbers:\n${duplicateMessages.join('\n')}`);
+        return false;
+    }
+
+    return true;
+}
 
     // --- Initialize Page ---
     if (!loadUserData()) {
