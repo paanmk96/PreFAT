@@ -34,6 +34,72 @@
             flex: 1;
             min-width: 200px;
         }
+        .processor-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .com6-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .universal-nav-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .universal-nav-toggle {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        .universal-nav-toggle:hover {
+            background-color: #2980b9;
+        }
+
+        .universal-nav-toggle::after {
+            content: " ▼";
+            float: right;
+        }
+
+        .universal-nav-toggle.collapsed::after {
+            content: " ▶";
+        }
+
+        .universal-nav {
+            border: 1px solid #ccc;
+            background-color: #cce4ef;
+            padding: 15px;
+            border-radius: 4px;
+            display: none; /* Initially hidden */
+        }
+
+        .universal-nav.active {
+            display: block;
+        }
+
+        .module-selectors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .module-selector {
+            flex: 1;
+            min-width: 200px;
+        }
         label {
             display: block;
             margin-bottom: 5px;
@@ -139,7 +205,7 @@
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
         th {
             background-color: #f2f2f2;
@@ -193,4 +259,26 @@
 
 .scan-button:hover {
     background-color: #45a049;
+}
+
+
+/* Add these styles to your CSS */
+input:invalid, select:invalid {
+    border-color: #ff0000;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+.highlight-error {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
 }

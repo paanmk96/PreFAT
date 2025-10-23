@@ -1,17 +1,18 @@
-    // JavaScript specific to userDetails.html
+// JavaScript specific to rtudetail.html
 document.getElementById("logo").addEventListener("click", () => {
-    // Decide if logo click should save data or clear it
-    // saveCurrentUserDetails(); // Optionally save before navigating
-    sessionStorage.clear(); // Or clear all session data for a fresh start
+    // Clear all session data for a fresh start
+    localStorage.clear();
     window.location.href = 'index.html';
 });
-        
+
 function saveCurrentRTUDetails() {
     const rtuSerialInput = document.getElementById('rtuSerial');
     const contractNoInput = document.getElementById('contractNo');
+    const projectNameInput = document.getElementById('projectName');
 
-    if (rtuSerialInput) sessionStorage.setItem('session_rtuSerial', rtuSerialInput.value.trim());
-    if (contractNoInput) sessionStorage.setItem('session_contractNo', contractNoInput.value.trim());
+    if (rtuSerialInput) localStorage.setItem('session_rtuSerial', rtuSerialInput.value.trim());
+    if (contractNoInput) localStorage.setItem('session_contractNo', contractNoInput.value.trim());
+    if (projectNameInput) localStorage.setItem('session_projectName', projectNameInput.value.trim());
 }
 
 // --- Utility Functions ---
@@ -27,43 +28,44 @@ function showCustomAlert(message) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if user has come through the previous steps
-    const userName = sessionStorage.getItem('session_name');
-    const userDesignation = sessionStorage.getItem('session_designation'); // Or any other essential previous data
+    // Helper function to remove extra quotes from stored values
+    const getStoredValue = (key) => {
+        let value = localStorage.getItem(key) || '';
+        if (value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1);
+        }
+        return value;
+    };
 
-    if (!sessionStorage.getItem('session_username') || !userName || !userDesignation) { // Check for login and previous step completion
-        // showCustomAlert("Please complete login and previous steps first.");
-        // setTimeout(() => { window.location.href = './login.html'; }, 1500); 
-        window.location.href = './index.html'; 
-        return; 
-    }
-    
-    // Load RTU data from sessionStorage
+    // Load RTU data from localStorage and remove extra quotes if present
     const rtuSerialInput = document.getElementById('rtuSerial');
     const contractNoInput = document.getElementById('contractNo');
+    const projectNameInput = document.getElementById('projectName');
 
-    if (rtuSerialInput) rtuSerialInput.value = sessionStorage.getItem('session_rtuSerial') || '';
-    if (contractNoInput) contractNoInput.value = sessionStorage.getItem('session_contractNo') || '';
+    if (rtuSerialInput) rtuSerialInput.value = getStoredValue('session_rtuSerial');
+    if (contractNoInput) contractNoInput.value = getStoredValue('session_contractNo');
+    if (projectNameInput) projectNameInput.value = getStoredValue('session_projectName');
 });
 
 function goBackToUserDetails() {
     saveCurrentRTUDetails(); // Save current RTU details
-    // No need to restore userDetails form here, that page's DOMContentLoaded will handle it from sessionStorage
     window.location.href = './userdetail.html'; 
 }
 
 function goToBQPage() {
     const rtuSerialInput = document.getElementById("rtuSerial");
     const contractNoInput = document.getElementById("contractNo");
+    const projectNameInput = document.getElementById("projectName");
 
     const rtuSerial = rtuSerialInput ? rtuSerialInput.value.trim() : "";
     const contractNo = contractNoInput ? contractNoInput.value.trim() : "";
+    const projectName = projectNameInput ? projectNameInput.value.trim() : "";
 
-    if (!rtuSerial || !contractNo) {
-        showCustomAlert("Please fill in RTU Serial No. and Contract No.");
+    if (!rtuSerial || !contractNo || !projectName) {
+        showCustomAlert("Please fill in all fields (RTU Serial No., Contract No., and Project Name)");
         return;
     }
-    saveCurrentRTUDetails(); // Save current RTU details
+    saveCurrentRTUDetails();
 
-    window.location.href = './BQ.html'; // Ensure 'bqPage.html' is the correct filename
+    window.location.href = './BQ.html';
 }

@@ -2,45 +2,50 @@
         document.getElementById("logo").addEventListener("click", () => {
             // Decide if logo click should save data or clear it
             // saveCurrentUserDetails(); // Optionally save before navigating
-            sessionStorage.clear(); // Or clear all session data for a fresh start
+            localStorage.clear(); // Or clear all session data for a fresh start
             window.location.href = 'index.html';
         });
 
         function saveCurrentUserDetails() {
-            sessionStorage.setItem('session_name', document.getElementById('name').value.trim());
-            sessionStorage.setItem('session_designation', document.getElementById('designation').value.trim());
-            sessionStorage.setItem('session_experience', document.getElementById('experience').value.trim());
+            localStorage.setItem('session_name', document.getElementById('name').value.trim());
+            localStorage.setItem('session_designation', document.getElementById('designation').value.trim());
+            localStorage.setItem('session_experience', document.getElementById('experience').value.trim());
         }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Check if user has come through the previous steps
-    const userName = sessionStorage.getItem('session_name');
-    const userDesignation = sessionStorage.getItem('session_designation'); // Or any other essential previous data
+    document.addEventListener('DOMContentLoaded', () => {
+        const nameInput = document.getElementById('name');
+        const designationInput = document.getElementById('designation');
+        const experienceInput = document.getElementById('experience');
 
-    if (!sessionStorage.getItem('session_username')) { // Check for login and previous step completion
-        // showCustomAlert("Please complete login and previous steps first.");
-        // setTimeout(() => { window.location.href = './login.html'; }, 1500); 
-        window.location.href = './index.html'; 
-        return; 
-    }
-    
-    const nameInput = document.getElementById('name');
-    const designationInput = document.getElementById('designation');
-    const experienceInput = document.getElementById('experience');
+        // Load data from localStorage and remove extra quotes if present
+        const getName = () => {
+            let name = localStorage.getItem('session_name') || '';
+            if (name.startsWith('"') && name.endsWith('"')) {
+                name = name.slice(1, -1);
+            }
+            return name;
+        };
 
-    // Load data from sessionStorage if it exists and the elements are found
-    if (nameInput) {
-        nameInput.value = sessionStorage.getItem('session_name') || '';
-    }
-    if (designationInput) {
-        designationInput.value = sessionStorage.getItem('session_designation') || '';
-    }
-    if (experienceInput) {
-        experienceInput.value = sessionStorage.getItem('session_experience') || '';
-    }
+        const getDesignation = () => {
+            let designation = localStorage.getItem('session_designation') || '';
+            if (designation.startsWith('"') && designation.endsWith('"')) {
+                designation = designation.slice(1, -1);
+            }
+            return designation;
+        };
 
-    
-        });
+        const getExperience = () => {
+            let experience = localStorage.getItem('session_experience') || '';
+            if (experience.startsWith('"') && experience.endsWith('"')) {
+                experience = experience.slice(1, -1);
+            }
+            return experience;
+        };
+
+        if (nameInput) nameInput.value = getName();
+        if (designationInput) designationInput.value = getDesignation();
+        if (experienceInput) experienceInput.value = getExperience();
+    });
 
                 // --- Utility Functions ---
         function showCustomAlert(message) {
